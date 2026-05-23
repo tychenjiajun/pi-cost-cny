@@ -1,54 +1,51 @@
 {
   "name": "pi-cny-cost",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "type": "module",
   "description": "Pi extension to display model costs in CNY (Chinese Yuan)",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "keywords": [
-    "pi",
+    "pi-package",
     "pi-extension",
-    "cny",
-    "yuan",
-    "cost",
+    "cny-cost",
     "pricing",
     "deepseek",
     "minimax",
     "xiaomi",
     "mimo"
   ],
-  "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
+  "author": "Jiajun Chen <tychenjiajun@live.cn>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tychenjiajun/pi-cny-cost.git"
   },
+  "homepage": "https://github.com/tychenjiajun/pi-cny-cost#readme",
   "files": [
-    "dist",
+    "*.ts",
     "README.md",
     "README_zh.md",
     "LICENSE"
   ],
-  "engines": {
-    "node": ">=18"
-  },
-  "scripts": {
-    "build": "tsc",
-    "check": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
-  },
   "pi": {
-    "extensions": ["./src/index.ts"]
+    "extensions": [
+      "./index.ts"
+    ]
   },
-  "dependencies": {
-    "@earendil-works/pi-coding-agent": "*",
+  "peerDependencies": {
     "@earendil-works/pi-ai": "*",
-    "@earendil-works/pi-tui": "*",
-    "typebox": "*"
+    "@earendil-works/pi-coding-agent": "*"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "@earendil-works/pi-agent-core": "^0.75.1",
+    "@earendil-works/pi-ai": "^0.75.1",
+    "@earendil-works/pi-coding-agent": "^0.75.1",
+    "knip": "^6.14.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7"
   },
-  "author": "Jiajun Chen <tychenjiajun@live.cn>",
-  "license": "MIT"
+  "packageManager": "npm@10.8.2"
 }
