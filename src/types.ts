@@ -20,3 +20,5 @@ export interface CnyCost {
 export interface CnyModel<TApi extends Api> extends Model<TApi> {
   cnyCost: CnyCost;
 }
+
+
