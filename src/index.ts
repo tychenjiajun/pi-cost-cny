@@ -28,7 +28,7 @@ export default function (pi: ExtensionAPI) {
           render(width: number): string[] {
             const model = ctx.model;
             const cnyCost = model
-              ? resolveCnyCost(model.id, model.cost, cnyJsonCosts, rate)
+              ? resolveCnyCost(model.provider, model.id, model.cost, cnyJsonCosts, rate)
               : undefined;
 
             let inputTokens = 0;

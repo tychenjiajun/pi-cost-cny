@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { CnyCost, CnyJsonConfig } from "./types.js";
 
 export interface ModelCnyPrice {
+  provider: string;
   id: string;
   cnyCost: CnyCost;
 }
@@ -21,6 +22,7 @@ const DEFAULT_RATE = 7.25;
  */
 export const DEEPSEEK_CNY_PRICES: ModelCnyPrice[] = [
   {
+    provider: "deepseek",
     id: "deepseek-v4-flash",
     cnyCost: {
       input: 1,       // cache miss: 1 yuan/million tokens
@@ -30,6 +32,7 @@ export const DEEPSEEK_CNY_PRICES: ModelCnyPrice[] = [
     },
   },
   {
+    provider: "deepseek",
     id: "deepseek-v4-pro",
     cnyCost: {
       input: 3,        // cache miss: 3 yuan/million tokens (discounted from 12)
@@ -48,44 +51,60 @@ export const DEEPSEEK_CNY_PRICES: ModelCnyPrice[] = [
  */
 export const MINIMAX_CNY_PRICES: ModelCnyPrice[] = [
   {
+    provider: "minimax-cn",
     id: "MiniMax-M2.7",
     cnyCost: { input: 2.1, output: 8.4, cacheRead: 0.42, cacheWrite: 2.625 },
   },
   {
+    provider: "minimax-cn",
     id: "MiniMax-M2.7-highspeed",
     cnyCost: { input: 4.2, output: 16.8, cacheRead: 0.42, cacheWrite: 2.625 },
   },
   {
+    provider: "minimax-cn",
     id: "MiniMax-M2.5",
     cnyCost: { input: 2.1, output: 8.4, cacheRead: 0.21, cacheWrite: 2.625 },
   },
   {
+    provider: "minimax-cn",
     id: "MiniMax-M2.5-highspeed",
     cnyCost: { input: 4.2, output: 16.8, cacheRead: 0.21, cacheWrite: 2.625 },
   },
   {
+    provider: "minimax-cn",
     id: "M2-her",
     cnyCost: { input: 2.1, output: 8.4, cacheRead: 0, cacheWrite: 0 },
   },
   {
+    provider: "minimax-cn",
     id: "MiniMax-M2.1",
     cnyCost: { input: 2.1, output: 8.4, cacheRead: 0.21, cacheWrite: 2.625 },
   },
   {
+    provider: "minimax-cn",
     id: "MiniMax-M2.1-highspeed",
     cnyCost: { input: 4.2, output: 16.8, cacheRead: 0.21, cacheWrite: 2.625 },
   },
   {
+    provider: "minimax-cn",
     id: "MiniMax-M2",
     cnyCost: { input: 2.1, output: 8.4, cacheRead: 0.21, cacheWrite: 2.625 },
   },
 ];
 
+/** Key by "provider:modelId" for exact provider scoping. */
+function priceKey(provider: string, id: string): string {
+  return `${provider}:${id}`;
+}
+
 /**
- * All built-in CNY prices, keyed by model id.
+ * All built-in CNY prices, keyed by "provider:modelId".
  */
 export const CNY_PRICE_MAP: Record<string, CnyCost> = Object.fromEntries(
-  [...DEEPSEEK_CNY_PRICES, ...MINIMAX_CNY_PRICES].map((p) => [p.id, p.cnyCost]),
+  [...DEEPSEEK_CNY_PRICES, ...MINIMAX_CNY_PRICES].map((p) => [
+    priceKey(p.provider, p.id),
+    p.cnyCost,
+  ]),
 );
 
 /** Strip // comments and trailing commas from JSON, leaving string literals untouched. */
@@ -123,7 +142,7 @@ export function loadRate(config: CnyJsonConfig | undefined): number {
 }
 
 /**
- * Build a lookup of CNY costs from cny.json, keyed by model id.
+ * Build a lookup of CNY costs from cny.json, keyed by "provider:modelId".
  * Supports both modelOverrides and inline models arrays.
  */
 export function loadCnyJsonCosts(config: CnyJsonConfig | undefined): Record<string, CnyCost> {
@@ -131,15 +150,15 @@ export function loadCnyJsonCosts(config: CnyJsonConfig | undefined): Record<stri
 
   const result: Record<string, CnyCost> = {};
 
-  for (const provider of Object.values(config.providers)) {
+  for (const [providerName, provider] of Object.entries(config.providers)) {
     // modelOverrides
     for (const [modelId, override] of Object.entries(provider.modelOverrides ?? {})) {
-      result[modelId] = override.cnyCost;
+      result[priceKey(providerName, modelId)] = override.cnyCost;
     }
 
     // inline models
     for (const model of provider.models ?? []) {
-      result[model.id] = model.cnyCost;
+      result[priceKey(providerName, model.id)] = model.cnyCost;
     }
   }
 
@@ -157,23 +176,26 @@ function convertCost(usdCost: { input: number; output: number; cacheRead: number
 
 /**
  * Resolve CNY cost for a model in priority order:
- * 1. cny.json explicit cnyCost (per provider, matching model id)
- * 2. Built-in CNY prices (exact CNY values from vendor)
+ * 1. cny.json explicit cnyCost (per provider, matching provider:modelId)
+ * 2. Built-in CNY prices (exact CNY values from vendor, scoped to provider)
  * 3. Model's USD cost converted via rate (skipped if rate is 0)
  * 4. Do nothing (returns undefined)
  */
 export function resolveCnyCost(
+  provider: string,
   modelId: string,
   modelCost: { input: number; output: number; cacheRead: number; cacheWrite: number } | undefined,
   cnyJsonCosts: Record<string, CnyCost>,
   rate: number,
 ): CnyCost | undefined {
+  const key = priceKey(provider, modelId);
+
   // 1. cny.json
-  const fromCnyJson = cnyJsonCosts[modelId];
+  const fromCnyJson = cnyJsonCosts[key];
   if (fromCnyJson) return fromCnyJson;
 
   // 2. built-in
-  const builtIn = CNY_PRICE_MAP[modelId];
+  const builtIn = CNY_PRICE_MAP[key];
   if (builtIn) return builtIn;
 
   // 3. convert (rate > 0)
