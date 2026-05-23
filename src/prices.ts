@@ -92,6 +92,68 @@ export const MINIMAX_CNY_PRICES: ModelCnyPrice[] = [
   },
 ];
 
+/**
+ * Built-in CNY prices for Xiaomi MiMo models (xiaomi provider, not token plan).
+ *
+ * Source: Xiaomi MiMo CN pricing page.
+ * Prices in CNY per million tokens.
+ *
+ * Tiered pricing by input length (≤256K / 256K-1M).
+ * Built-in uses the ≤256K tier. For 256K-1M, use cny.json overrides.
+ */
+export const XIAOMI_MIMO_CNY_PRICES: ModelCnyPrice[] = [
+  {
+    provider: "xiaomi",
+    id: "mimo-v2.5-pro",
+    cnyCost: {
+      input: 7,        // ≤256K: 7 (256K-1M: 14)
+      output: 21,      // ≤256K: 21 (256K-1M: 42)
+      cacheRead: 1.4,  // ≤256K: 1.4 (256K-1M: 2.8)
+      cacheWrite: 0,
+    },
+  },
+  {
+    provider: "xiaomi",
+    id: "mimo-v2-pro",
+    cnyCost: {
+      input: 7,        // ≤256K: 7 (256K-1M: 14)
+      output: 21,      // ≤256K: 21 (256K-1M: 42)
+      cacheRead: 1.4,  // ≤256K: 1.4 (256K-1M: 2.8)
+      cacheWrite: 0,
+    },
+  },
+  {
+    provider: "xiaomi",
+    id: "mimo-v2.5",
+    cnyCost: {
+      input: 2.8,      // ≤256K: 2.8 (256K-1M: 5.6)
+      output: 14,      // ≤256K: 14 (256K-1M: 28)
+      cacheRead: 0.56, // ≤256K: 0.56 (256K-1M: 1.12)
+      cacheWrite: 0,
+    },
+  },
+  {
+    provider: "xiaomi",
+    id: "mimo-v2-omni",
+    cnyCost: {
+      input: 2.8,
+      output: 14,
+      cacheRead: 0.56,
+      cacheWrite: 0,
+    },
+  },
+  {
+    provider: "xiaomi",
+    id: "mimo-v2-flash",
+    cnyCost: {
+      input: 0.7,
+      output: 2.1,
+      cacheRead: 0.07,
+      cacheWrite: 0,
+    },
+  },
+];
+
 /** Key by "provider:modelId" for exact provider scoping. */
 function priceKey(provider: string, id: string): string {
   return `${provider}:${id}`;
@@ -101,7 +163,7 @@ function priceKey(provider: string, id: string): string {
  * All built-in CNY prices, keyed by "provider:modelId".
  */
 export const CNY_PRICE_MAP: Record<string, CnyCost> = Object.fromEntries(
-  [...DEEPSEEK_CNY_PRICES, ...MINIMAX_CNY_PRICES].map((p) => [
+  [...DEEPSEEK_CNY_PRICES, ...MINIMAX_CNY_PRICES, ...XIAOMI_MIMO_CNY_PRICES].map((p) => [
     priceKey(p.provider, p.id),
     p.cnyCost,
   ]),

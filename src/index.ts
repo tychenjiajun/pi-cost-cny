@@ -5,7 +5,7 @@ import { loadCnyJson, loadCnyJsonCosts, loadRate, resolveCnyCost } from "./price
 import type { CnyCost } from "./types.js";
 
 export type { CnyCost, CnyModel, CnyJsonConfig } from "./types.js";
-export { CNY_PRICE_MAP, DEEPSEEK_CNY_PRICES, MINIMAX_CNY_PRICES } from "./prices.js";
+export { CNY_PRICE_MAP, DEEPSEEK_CNY_PRICES, MINIMAX_CNY_PRICES, XIAOMI_MIMO_CNY_PRICES } from "./prices.js";
 
 function formatCost(cny: number): string {
   if (cny < 0.01) return cny.toFixed(4);
