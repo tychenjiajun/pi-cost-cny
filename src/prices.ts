@@ -41,10 +41,39 @@ export const DEEPSEEK_CNY_PRICES: ModelCnyPrice[] = [
 ];
 
 /**
+ * Built-in CNY prices for MiniMax models.
+ *
+ * Source: MiniMax CN pricing page.
+ * Prices in CNY per million tokens.
+ */
+export const MINIMAX_CNY_PRICES: ModelCnyPrice[] = [
+  {
+    id: "MiniMax-M2.7",
+    cnyCost: { input: 2.1, output: 8.4, cacheRead: 0.42, cacheWrite: 2.625 },
+  },
+  {
+    id: "MiniMax-M2.7-highspeed",
+    cnyCost: { input: 4.2, output: 16.8, cacheRead: 0.42, cacheWrite: 2.625 },
+  },
+  {
+    id: "MiniMax-M2.5",
+    cnyCost: { input: 2.1, output: 8.4, cacheRead: 0.21, cacheWrite: 2.625 },
+  },
+  {
+    id: "MiniMax-M2.5-highspeed",
+    cnyCost: { input: 4.2, output: 16.8, cacheRead: 0.21, cacheWrite: 2.625 },
+  },
+  {
+    id: "M2-her",
+    cnyCost: { input: 2.1, output: 8.4, cacheRead: 0, cacheWrite: 0 },
+  },
+];
+
+/**
  * All built-in CNY prices, keyed by model id.
  */
 export const CNY_PRICE_MAP: Record<string, CnyCost> = Object.fromEntries(
-  DEEPSEEK_CNY_PRICES.map((p) => [p.id, p.cnyCost]),
+  [...DEEPSEEK_CNY_PRICES, ...MINIMAX_CNY_PRICES].map((p) => [p.id, p.cnyCost]),
 );
 
 /** Strip // comments and trailing commas from JSON, leaving string literals untouched. */
