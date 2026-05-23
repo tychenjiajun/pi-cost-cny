@@ -21,4 +21,25 @@ export interface CnyModel<TApi extends Api> extends Model<TApi> {
   cnyCost: CnyCost;
 }
 
+/**
+ * Per-model CNY cost override (mirrors models.json ModelOverride shape).
+ */
+export interface CnyModelOverride {
+  cnyCost: CnyCost;
+}
 
+/**
+ * Per-provider CNY config (mirrors models.json ProviderConfig shape).
+ */
+export interface CnyProviderConfig {
+  modelOverrides?: Record<string, CnyModelOverride>;
+  models?: Array<{ id: string; cnyCost: CnyCost }>;
+}
+
+/**
+ * Shape of ~/.pi/agent/cny.json (mirrors models.json layout).
+ */
+export interface CnyJsonConfig {
+  rate?: number;
+  providers?: Record<string, CnyProviderConfig>;
+}

@@ -1,10 +1,10 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import { loadModelsJsonCnyCosts, loadRate, resolveCnyCost } from "./prices.js";
+import { loadCnyJson, loadCnyJsonCosts, loadRate, resolveCnyCost } from "./prices.js";
 import type { CnyCost } from "./types.js";
 
-export type { CnyCost, CnyModel } from "./types.js";
+export type { CnyCost, CnyModel, CnyJsonConfig } from "./types.js";
 export { CNY_PRICE_MAP, DEEPSEEK_CNY_PRICES } from "./prices.js";
 
 function formatCost(cny: number): string {
@@ -14,8 +14,9 @@ function formatCost(cny: number): string {
 }
 
 export default function (pi: ExtensionAPI) {
-  const rate = loadRate();
-  const modelsJsonCosts = loadModelsJsonCnyCosts(rate);
+  const cnyJson = loadCnyJson();
+  const rate = loadRate(cnyJson);
+  const cnyJsonCosts = loadCnyJsonCosts(cnyJson);
 
   pi.registerCommand("cny-cost", {
     description: "Toggle CNY cost display in the footer",
@@ -25,10 +26,10 @@ export default function (pi: ExtensionAPI) {
           dispose: () => {},
           invalidate() {},
           render(width: number): string[] {
-            const modelId = ctx.model?.id;
-            const cnyCost = modelId
-              ? resolveCnyCost(modelId, modelsJsonCosts)
-              : null;
+            const model = ctx.model;
+            const cnyCost = model
+              ? resolveCnyCost(model.id, model.cost, cnyJsonCosts, rate)
+              : undefined;
 
             let inputTokens = 0;
             let outputTokens = 0;
@@ -60,7 +61,7 @@ export default function (pi: ExtensionAPI) {
               "dim",
               `↑${fmt(inputTokens)} ↓${fmt(outputTokens)}${costStr}`,
             );
-            const right = theme.fg("dim", `${modelId ?? "no-model"}`);
+            const right = theme.fg("dim", `${model?.id ?? "no-model"}`);
 
             const pad = " ".repeat(
               Math.max(1, width - visibleWidth(left) - visibleWidth(right)),
