@@ -67,6 +67,18 @@ export const MINIMAX_CNY_PRICES: ModelCnyPrice[] = [
     id: "M2-her",
     cnyCost: { input: 2.1, output: 8.4, cacheRead: 0, cacheWrite: 0 },
   },
+  {
+    id: "MiniMax-M2.1",
+    cnyCost: { input: 2.1, output: 8.4, cacheRead: 0.21, cacheWrite: 2.625 },
+  },
+  {
+    id: "MiniMax-M2.1-highspeed",
+    cnyCost: { input: 4.2, output: 16.8, cacheRead: 0.21, cacheWrite: 2.625 },
+  },
+  {
+    id: "MiniMax-M2",
+    cnyCost: { input: 2.1, output: 8.4, cacheRead: 0.21, cacheWrite: 2.625 },
+  },
 ];
 
 /**
