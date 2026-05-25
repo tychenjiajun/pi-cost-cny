@@ -33,11 +33,6 @@ pi install -l npm:pi-cny-cost
 
 ### 手动安装
 
-```bash
-# 在项目目录下
-npm run build
-```
-
 然后将扩展添加到 Pi 配置（如 `~/.pi/agent/config.json`）：
 
 ```json

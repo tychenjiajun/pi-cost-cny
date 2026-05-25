@@ -1,23 +1,13 @@
 {
   "name": "pi-cny-cost",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "description": "Pi extension to display model costs in CNY (Chinese Yuan)",
   "main": "index.ts",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "build": "tsc",
-    "check": "tsc --noEmit",
-    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -39,7 +29,6 @@
   "homepage": "https://github.com/tychenjiajun/pi-cny-cost#readme",
   "files": [
     "*.ts",
-    "dist",
     "README.md",
     "README_zh.md",
     "LICENSE"

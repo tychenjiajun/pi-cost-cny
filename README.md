@@ -33,11 +33,6 @@ pi install -l npm:pi-cny-cost
 
 ### Manual installation
 
-```bash
-# From the project directory
-npm run build
-```
-
 Then add the extension to your Pi config (e.g. `~/.pi/agent/config.json`):
 
 ```json
