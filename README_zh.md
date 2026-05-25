@@ -35,7 +35,7 @@ pnpm build
 ```json
 {
   "pi": {
-    "extensions": ["./src/index.ts"]
+    "extensions": ["./index.ts"]
   }
 }
 ```

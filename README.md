@@ -35,7 +35,7 @@ Or if you have it in your project's `package.json`:
 ```json
 {
   "pi": {
-    "extensions": ["./src/index.ts"]
+    "extensions": ["./index.ts"]
   }
 }
 ```

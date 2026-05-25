@@ -4,7 +4,20 @@
   "type": "module",
   "description": "Pi extension to display model costs in CNY (Chinese Yuan)",
   "main": "index.ts",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -26,6 +39,7 @@
   "homepage": "https://github.com/tychenjiajun/pi-cny-cost#readme",
   "files": [
     "*.ts",
+    "dist",
     "README.md",
     "README_zh.md",
     "LICENSE"
@@ -37,12 +51,14 @@
   },
   "peerDependencies": {
     "@earendil-works/pi-ai": "*",
-    "@earendil-works/pi-coding-agent": "*"
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
   },
   "devDependencies": {
     "@earendil-works/pi-agent-core": "^0.75.1",
     "@earendil-works/pi-ai": "^0.75.1",
     "@earendil-works/pi-coding-agent": "^0.75.1",
+    "@earendil-works/pi-tui": "^0.75.1",
     "knip": "^6.14.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.7"
