@@ -1,6 +1,5 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
-import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import { loadCnyJson, loadCnyJsonCosts, loadRate, resolveCnyCost } from "./prices.js";
 import type { CnyCost } from "./types.js";
 
@@ -20,59 +19,53 @@ export default function (pi: ExtensionAPI) {
   const rate = loadRate(cnyJson);
   const cnyJsonCosts = loadCnyJsonCosts(cnyJson);
 
+  let enabled = false;
+
+  // Subscribe once, check enabled state on each event
+  pi.on("turn_end", async (_event, ctx) => {
+    if (!enabled) return;
+
+    const model = ctx.model;
+    const cnyCost = model
+      ? resolveCnyCost(model.provider, model.id, model.cost, cnyJsonCosts, rate)
+      : undefined;
+
+    let totalCny = 0;
+
+    for (const e of ctx.sessionManager.getBranch()) {
+      if (e.type === "message" && e.message.role === "assistant") {
+        const m = e.message as AssistantMessage;
+
+        if (cnyCost) {
+          const cacheRead = m.usage.cacheRead ?? 0;
+          const cacheWrite = m.usage.cacheWrite ?? 0;
+          const directInput = Math.max(0, m.usage.input - cacheRead);
+
+          totalCny +=
+            (directInput / 1_000_000) * cnyCost.input +
+            (cacheRead / 1_000_000) * cnyCost.cacheRead +
+            (cacheWrite / 1_000_000) * cnyCost.cacheWrite +
+            (m.usage.output / 1_000_000) * cnyCost.output;
+        }
+      }
+    }
+
+    // Show CNY cost in widget
+    const cnyStr = cnyCost ? `¥${formatCost(Math.max(0, totalCny))}` : "N/A";
+    ctx.ui.setWidget("cny-cost", [`CNY cost: ${cnyStr}`], { placement: "belowEditor" });
+  });
+
   pi.registerCommand("cny-cost", {
-    description: "Toggle CNY cost display in the footer",
+    description: "Toggle CNY cost display in a widget",
     handler: async (_args, ctx) => {
-      ctx.ui.setFooter((tui, theme, footerData) => {
-        return {
-          dispose: () => {},
-          invalidate() {},
-          render(width: number): string[] {
-            const model = ctx.model;
-            const cnyCost = model
-              ? resolveCnyCost(model.provider, model.id, model.cost, cnyJsonCosts, rate)
-              : undefined;
-
-            let inputTokens = 0;
-            let outputTokens = 0;
-            let totalCNY = 0;
-
-            for (const e of ctx.sessionManager.getBranch()) {
-              if (e.type === "message" && e.message.role === "assistant") {
-                const m = e.message as AssistantMessage;
-                inputTokens += m.usage.input;
-                outputTokens += m.usage.output;
-
-                if (cnyCost) {
-                  const cacheRead = m.usage.cacheRead ?? 0;
-                  const directInput = m.usage.input - cacheRead;
-
-                  totalCNY +=
-                    (directInput / 1_000_000) * cnyCost.input +
-                    (cacheRead / 1_000_000) * cnyCost.cacheRead +
-                    (m.usage.output / 1_000_000) * cnyCost.output;
-                }
-              }
-            }
-
-            const fmt = (n: number) =>
-              n < 1000 ? `${n}` : `${(n / 1000).toFixed(1)}k`;
-
-            const costStr = cnyCost ? ` ¥${formatCost(totalCNY)}` : "";
-            const left = theme.fg(
-              "dim",
-              `↑${fmt(inputTokens)} ↓${fmt(outputTokens)}${costStr}`,
-            );
-            const right = theme.fg("dim", `${model?.id ?? "no-model"}`);
-
-            const pad = " ".repeat(
-              Math.max(1, width - visibleWidth(left) - visibleWidth(right)),
-            );
-            return [truncateToWidth(left + pad + right, width)];
-          },
-        };
-      });
-      ctx.ui.notify("CNY cost footer enabled", "info");
+      if (!enabled) {
+        enabled = true;
+        ctx.ui.notify("CNY cost widget enabled", "info");
+      } else {
+        enabled = false;
+        ctx.ui.setWidget("cny-cost", undefined);
+        ctx.ui.notify("CNY cost widget disabled", "info");
+      }
     },
   });
 }

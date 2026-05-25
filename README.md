@@ -4,7 +4,8 @@ A [Pi](https://github.com/earendil-works/pi) extension that displays model token
 
 ## Features
 
-- Adds a `cny-cost` command to toggle a footer showing input/output token counts and total cost in ¥
+- Adds a `cny-cost` command to toggle a **widget** showing total cost in ¥ (below the editor, doesn't replace the footer)
+- Built-in footer with token stats and context usage remains intact
 - Built-in CNY prices for:
   - **DeepSeek** — deepseek-v4-flash, deepseek-v4-pro
   - **MiniMax** — MiniMax-M2, M2.1, M2.5, M2.7 and highspeed variants
@@ -59,13 +60,17 @@ In the Pi TUI, run:
 /cny-cost
 ```
 
-This toggles a footer bar showing:
+This toggles a widget **below the editor** showing:
 
 ```
-↑12.3k ↓4.5k ¥1.23   model-name
+CNY cost: ¥1.23
 ```
 
-Where ↑ = input tokens, ↓ = output tokens, and ¥ = total CNY cost.
+The built-in footer with token stats and context usage remains unchanged:
+
+```
+↑273k ↓13k R172k 12.9%/262k (auto)   model-name
+```
 
 ## Configuration
 

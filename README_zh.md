@@ -4,7 +4,8 @@
 
 ## 功能
 
-- 提供 `cny-cost` 命令，切换底栏显示：输入/输出 token 数 + 总费用（¥）
+- 提供 `cny-cost` 命令，切换**小部件**显示总费用（¥）（位于编辑器下方，不替换底栏）
+- 保留原有的底栏，继续显示 token 统计和上下文使用率
 - 内置以下模型的人民币定价：
   - **DeepSeek** — deepseek-v4-flash、deepseek-v4-pro
   - **MiniMax** — MiniMax-M2、M2.1、M2.5、M2.7 及高速版本
@@ -59,13 +60,17 @@ pi install -l npm:pi-cny-cost
 /cny-cost
 ```
 
-将切换显示底栏：
+将切换**编辑器下方**的小部件显示：
 
 ```
-↑12.3k ↓4.5k ¥1.23   model-name
+CNY cost: ¥1.23
 ```
 
-其中 ↑ = 输入 token 数，↓ = 输出 token 数，¥ = 总人民币费用。
+原有的底栏保持不变，继续显示 token 统计和上下文使用率：
+
+```
+↑273k ↓13k R172k 12.9%/262k (auto)   model-name
+```
 
 ## 配置
 
