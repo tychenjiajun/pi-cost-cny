@@ -17,9 +17,25 @@
 
 ## 安装
 
+### 推荐方式：通过 Pi 安装
+
+使用 `pi` 全局安装包：
+
+```bash
+pi install npm:pi-cny-cost
+```
+
+或者为项目安装（添加到 `.pi/settings.json`）：
+
+```bash
+pi install -l npm:pi-cny-cost
+```
+
+### 手动安装
+
 ```bash
 # 在项目目录下
-pnpm build
+npm run build
 ```
 
 然后将扩展添加到 Pi 配置（如 `~/.pi/agent/config.json`）：

@@ -17,9 +17,25 @@ A [Pi](https://github.com/earendil-works/pi) extension that displays model token
 
 ## Installation
 
+### Via Pi (recommended)
+
+Install the package globally using `pi`:
+
+```bash
+pi install npm:pi-cny-cost
+```
+
+Or install it for your project (adds to `.pi/settings.json`):
+
+```bash
+pi install -l npm:pi-cny-cost
+```
+
+### Manual installation
+
 ```bash
 # From the project directory
-pnpm build
+npm run build
 ```
 
 Then add the extension to your Pi config (e.g. `~/.pi/agent/config.json`):
